@@ -1,0 +1,58 @@
+<html>
+<head>
+    <title>circle - Just a simple chat room</title>
+    <meta charset="utf-8">
+    <style>
+        .sys {
+            font-weight: 900;
+        }
+
+        .user, .sys {
+            padding: 2px;
+            margin: 0;
+        }
+    </style>
+</head>
+
+<body>
+<div id="connect-div">
+    <input type="text" placeholder="username" id="username" />
+    <button type="button" id="connect-button">connect</button>
+</div>
+<div id="send-div">
+    <input type="text" value="" placeholder="send some message" id="message" />
+    <button type="button" id="send-button">send</button>
+</div>
+<p id="container"></p>
+
+<script>
+    document.getElementById('send-div').hidden = true;
+    var connect_button = document.getElementById('connect-button');
+    connect_button.onclick = function () {
+        var username = document.getElementById('username').value;
+        url = document.baseURI.replace('http://', 'ws://');
+        ws = new WebSocket(url + 'chat?username=' + username);
+
+        ws.onmessage = function (event) {
+            var p = document.createElement('p');
+            eval('var data = ' + event.data);
+            p.className = data.type;
+            p.innerText = data.username ? '[' + data.username + ']: ' + data.message : data.message;
+            document.getElementById('container').appendChild(p);
+        };
+
+        document.getElementById('connect-div').hidden = true;
+        document.getElementById('send-div').hidden = false;
+    };
+
+
+    var send_button = document.getElementById('send-button');
+    send_button.onclick = function(){
+        var message = document.getElementById('message').value;
+        if (message) {
+            ws.send(message);
+        }
+    }
+</script>
+</body>
+</html>
