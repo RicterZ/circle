@@ -7,6 +7,9 @@ class IndexHandler(BaseHandler):
 
 
 class ChatSocketHandler(BaseSocketHandler):
+    def check_origin(self, origin):
+        return True
+
     def open(self):
         if not self.session.has_key('username'):
             username = self.request.arguments.get('username')
